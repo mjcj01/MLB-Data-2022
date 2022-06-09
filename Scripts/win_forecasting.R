@@ -26,12 +26,76 @@ wins_plot <- function(Team) {
   
   team_wins <- filter(df1, Tm == Team & Year == 2022)
   
+  if (Team == "PHI") {
+    color <- c("#E81828","#002d72","#FFFFFF")
+  } else if (Team == "ARI") {
+    color <- c("#A71930","#E3D4AD","#000000")
+  } else if (Team == "ATL") {
+    color <- c("#CE1141","#13274F","#EAAA00")
+  } else if (Team == "BAL") {
+    color <- c("#DF4601","#000000","#FFFFFF")
+  } else if (Team == "BOS") {
+    color <- c("#BD3039","#0C2340","#FFFFFF")
+  } else if (Team == "CHC") {
+    color <- c("#0E3386","#CC3433","#FFFFFF")
+  } else if (Team == "CHW") {
+    color <- c("#27251F","#C4CED4","#FFFFFF")
+  } else if (Team == "CIN") {
+    color <- c("#C6011F","#000000","#FFFFFF")
+  } else if (Team == "CLE") {
+    color <- c("#00385D","#E50022","#FFFFFF")
+  } else if (Team == "COL") {
+    color <- c("#333366","#C4CED4","#131413")
+  } else if (Team == "DET") {
+    color <- c("#0C2340","#FA4616","#FFFFFF")
+  } else if (Team == "HOU") {
+    color <- c("#002D62","#EB6E1F","#F4911E")
+  } else if (Team == "KCR") {
+    color <- c("#004687","#BD9B60","#FFFFFF")
+  } else if (Team == "LAA") {
+    color <- c("#003263","#BA0021","#862633")
+  } else if (Team == "LAD") {
+    color <- c("#005A9C","#EF3E42","#FFFFFF")
+  } else if (Team == "MIA") {
+    color <- c("#00A3E0","#FF6600","#FFD100")
+  } else if (Team == "MIL") {
+    color <- c("#ffc52f","#12284b","#FFFFFF")
+  } else if (Team == "MIN") {
+    color <- c("#002B5C","#D31145","#B9975B")
+  } else if (Team == "NYM") {
+    color <- c("#002D72","#FF5910","#FFFFFF")
+  } else if (Team == "NYY") {
+    color <- c("#0C2340","#E4002C","#FFFFFF")
+  } else if (Team == "OAK") {
+    color <- c("#003831","#EFB21E","#FFFFFF")
+  } else if (Team == "PIT") {
+    color <- c("#27251F","#FFC72C","#E4002B")
+  } else if (Team == "SDP") {
+    color <- c("#2F241D","#FFC425","#002d62")
+  } else if (Team == "SFG") {
+    color <- c("#FD5A1E","#27251F","#EFD19F")
+  } else if (Team == "SEA") {
+    color <- c("#0C2C56","#005C5C","#D50032")
+  } else if (Team == "STL") {
+    color <- c("#C41E3A","#0C2340","#FEDB00")
+  } else if (Team == "TBR") {
+    color <- c("#092C5C","#8FBCE6","#F5D130")
+  } else if (Team == "TEX") {
+    color <- c("#003278","#C0111F","#FFFFFF")
+  } else if (Team == "TOR") {
+    color <- c("#134A8E","#1D2D5C","#E8291C")
+  } else if (Team == "WSN") {
+    color <- c("#AB0003","#14225A","#FFFFFF")
+  } else {
+    color <- c("000000","000000","000000")
+  }
+  
   most_recent_game_number <- max(team_wins$Gm)
   
   ggplot(data = team_wins, aes(x = Gm)) +
-    geom_line(aes(y = wins_so_far, color = "Team's Current Wins"), size = 2) +
+    geom_line(aes(y = wins_so_far, color = paste(Team, "Current Wins")), size = 2) +
     xlim(0,most_recent_game_number) +
-    geom_smooth(data = previous_seasons, method = loess, aes(x = Gm, y = wins_so_far, color = "Team's Past Seasons")) +
+    geom_smooth(data = previous_seasons, method = loess, aes(x = Gm, y = wins_so_far, color = paste(Team, "Past Seasons"))) +
     geom_smooth(data = playoff_team_wins_2022, method = loess, aes(x = Gm, y = wins_so_far, color = "Current Playoff Averages")) +
     ggtitle(paste(
 Team, "Wins Relative to Past Seasons 
@@ -39,7 +103,7 @@ Team, "Wins Relative to Past Seasons
     labs(caption = "Data compiled from the baseballr package.",
          colour = "") +
     theme_fivethirtyeight() +
-    scale_color_solarized() +
+    scale_color_manual(values = color) +
     theme(
       legend.position = "bottom",
     )
@@ -47,7 +111,3 @@ Team, "Wins Relative to Past Seasons
 
 wins_plot("PHI")
 
-filter(df1, Tm %in% projected_playoff_teams_2022 & Year == 2022) %>%
-  ggplot(aes(x = Gm, y = wins_so_far, color = Tm)) +
-  geom_line() +
-  geom_smooth(aes(x = Gm, y = wins_so_far))

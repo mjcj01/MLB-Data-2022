@@ -59,7 +59,7 @@ simulate_game_both_pitchers <- function(team, opponent, team_pitcher, opp_pitche
   game_predict(team, opponent, team_pitcher, opp_pitcher)
 }
 
-simulate_game_both_pitchers("PHI","MIL","Zach Eflin","Corbin Burnes")
+simulate_game_both_pitchers("PHI","ARI","Kyle Gibson","Zac Gallen")
 
 run_distribution_graph <- function(team, opponent, team_pitcher, opp_pitcher) {
   
@@ -157,15 +157,21 @@ run_distribution_graph <- function(team, opponent, team_pitcher, opp_pitcher) {
   df_3 <- simulate_game_both_pitchers(team, opponent, team_pitcher, opp_pitcher)
   
   ggplot(df_2, aes(x = c(-20:20))) +
-    geom_col(aes(y = RunProbability)) +
+    geom_col(aes(y = RunProbability), fill = "#6d3c3c") +
     scale_x_continuous(breaks = c(-5,0,5), limits = c(-5.5,5.5)) +
     ylim(0,0.2) +
-    labs(x = "Runs Won/Lost By",
-         y = "Probability") +
+    labs(x = paste("Runs", team, "Wins/Loses By"),
+         y = "Probability",
+         caption = "Data compiled from the baseballr package.") +
     ggtitle(paste(team, "vs.", opponent)) +
+    theme_fivethirtyeight() +
     theme(
       panel.grid.major.x = element_blank(),
-      panel.grid.minor.x = element_blank()
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_line(color = "grey", size = 0.5),
+      plot.title = element_text(size = 20),
+      axis.ticks = element_line(color = "grey"),
+      axis.title = element_text()
     )
 }
 
