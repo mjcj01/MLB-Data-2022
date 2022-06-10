@@ -3,6 +3,7 @@ library(baseballr)
 library(ggthemes)
 library(forecast)
 library(showtext)
+library(mgsub)
 
 font_add_google("Roboto Condensed")
 showtext_auto()
@@ -109,5 +110,5 @@ Team, "Wins Relative to Past Seasons
     )
 }
 
-wins_plot("PHI")
+wins_plot("NYM")
 

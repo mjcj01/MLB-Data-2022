@@ -1,5 +1,8 @@
 library(tidyverse)
 library(baseballr)
+library(ggthemes)
+library(forecast)
+library(showtext)
 library(mgsub)
 
 ### Loading games from 2017 - 2022
@@ -55,14 +58,18 @@ bref_team_results_2017_2022 <- function(Tm) {
   df_master <- rbind(df_2017, df_2018, df_2019, df_2020, df_2021, df_2022) %>%
     bind_rows()
   
+  df_master$Tm <- as.factor(df_master$Tm)
+  
+  df_master$Opp <- as.factor(df_master$Opp)
+  
   df_master$Result <- df_master$Result %>%
     gsub(pattern = "-wo", replacement = "") %>%
     as.character()
   
   df_master$Date <- df_master$Date %>%
     gsub(pattern = "\\s*\\([^\\)]+\\)", replacement = "") %>%
-    mgsub(pattern = c("Monday, ", "Tuesday, ", "Wednesday, ", "Thursday, ", "Friday, ", "Saturday, ", "Sunday, ", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"), 
-          c("", "", "", "", "", "", "", "April", "May", "June", "July", "August", "September", "October"))
+    mgsub(pattern = c("Monday, ", "Tuesday, ", "Wednesday, ", "Thursday, ", "Friday, ", "Saturday, ", "Sunday, ", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"), 
+          c("", "", "", "", "", "", "", "March", "April", "May", "June", "July", "August", "September", "October"))
   
   df_master$DateFull <- paste(df_master$Date, df_master$Year, sep = " ") %>%
     as.Date(format = "%B %d %Y")
