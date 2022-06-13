@@ -19,13 +19,77 @@ playoff_teams_2019 <- c("NYY","TBR","MIN","HOU","OAK","CLE","ATL","WSN","STL","M
 
 wins_plot <- function(Team) {
   
-  previous_seasons <- rbind(filter(df1, Year == 2017 & Tm == Team),filter(df1, Year == 2018 & Tm == Team),
-                            filter(df1, Year == 2019 & Tm == Team),filter(df1, Year == 2020 & Tm == Team),
-                            filter(df1, Year == 2021 & Tm == Team))
+  if (Team == "PHI") {
+    team_full <- c("Phillies")
+  } else if (Team == "ARI") {
+    team_full <- c("Diamondbacks")
+  } else if (Team == "ATL") {
+    team_full <- c("Braves")
+  } else if (Team == "BAL") {
+    team_full <- c("Orioles")
+  } else if (Team == "BOS") {
+    team_full <- c("Red Sox")
+  } else if (Team == "CHC") {
+    team_full <- c("Cubs")
+  } else if (Team == "CHW") {
+    team_full <- c("White Sox")
+  } else if (Team == "CIN") {
+    team_full <- c("Reds")
+  } else if (Team == "CLE") {
+    team_full <- c("Guardians")
+  } else if (Team == "COL") {
+    team_full <- c("Rockies")
+  } else if (Team == "DET") {
+    team_full <- c("Tigers")
+  } else if (Team == "HOU") {
+    team_full <- c("Astros")
+  } else if (Team == "KCR") {
+    team_full <- c("Royals")
+  } else if (Team == "LAA") {
+    team_full <- c("Angels")
+  } else if (Team == "LAD") {
+    team_full <- c("Dodgers")
+  } else if (Team == "MIA") {
+    team_full <- c("Marlins")
+  } else if (Team == "MIL") {
+    team_full <- c("Brewers")
+  } else if (Team == "MIN") {
+    team_full <- c("Twins")
+  } else if (Team == "NYM") {
+    team_full <- c("Mets")
+  } else if (Team == "NYY") {
+    team_full <- c("Yankees")
+  } else if (Team == "OAK") {
+    team_full <- c("Athletics")
+  } else if (Team == "PIT") {
+    team_full <- c("Pirates")
+  } else if (Team == "SDP") {
+    team_full <- c("Padres")
+  } else if (Team == "SFG") {
+    team_full <- c("Giants")
+  } else if (Team == "SEA") {
+    team_full <- c("Mariners")
+  } else if (Team == "STL") {
+    team_full <- c("Cardinals")
+  } else if (Team == "TBR") {
+    team_full <- c("Rays")
+  } else if (Team == "TEX") {
+    team_full <- c("Texans")
+  } else if (Team == "TOR") {
+    team_full <- c("Blue Jays")
+  } else if (Team == "WSN") {
+    team_full <- c("Nationals")
+  } else {
+    team_full <- c("NULL")
+  }
   
-  playoff_team_wins_2022 <- filter(df1, Tm %in% projected_playoff_teams_2022 & Year == 2022)
+  previous_seasons <- rbind(filter(df2017_2022, Year == 2017 & Tm == Team),filter(df2017_2022, Year == 2018 & Tm == Team),
+                            filter(df2017_2022, Year == 2019 & Tm == Team),filter(df2017_2022, Year == 2020 & Tm == Team),
+                            filter(df2017_2022, Year == 2021 & Tm == Team))
   
-  team_wins <- filter(df1, Tm == Team & Year == 2022)
+  playoff_team_wins_2022 <- filter(df2017_2022, Tm %in% projected_playoff_teams_2022 & Year == 2022)
+  
+  team_wins <- filter(df2017_2022, Tm == Team & Year == 2022)
   
   if (Team == "PHI") {
     color <- c("#E81828","#002d72","#FFFFFF")
@@ -94,12 +158,12 @@ wins_plot <- function(Team) {
   most_recent_game_number <- max(team_wins$Gm)
   
   ggplot(data = team_wins, aes(x = Gm)) +
-    geom_line(aes(y = wins_so_far, color = paste(Team, "Current Wins")), size = 2) +
+    geom_line(aes(y = wins_so_far, color = paste(team_full, "Current Wins")), size = 2) +
     xlim(0,most_recent_game_number) +
-    geom_smooth(data = previous_seasons, method = loess, aes(x = Gm, y = wins_so_far, color = paste(Team, "Past Seasons"))) +
+    geom_smooth(data = previous_seasons, method = loess, aes(x = Gm, y = wins_so_far, color = paste(team_full, "Past Seasons"))) +
     geom_smooth(data = playoff_team_wins_2022, method = loess, aes(x = Gm, y = wins_so_far, color = "Current Playoff Averages")) +
     ggtitle(paste(
-Team, "Wins Relative to Past Seasons 
+team_full, "Wins Relative to Past Seasons 
 & Current Playoff Contenders")) +
     labs(caption = "Data compiled from the baseballr package.",
          colour = "") +
@@ -110,5 +174,5 @@ Team, "Wins Relative to Past Seasons
     )
 }
 
-wins_plot("NYM")
+wins_plot("PHI")
 

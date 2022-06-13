@@ -7,11 +7,66 @@ library(mgsub)
 
 ### Loading games from 2017 - 2022
 
-Tm <- c("OAK", "PIT", "SD",  "SEA", "SF",  "STL", "TB",  "TEX", "TOR", "MIN",
+Team <- c("OAK", "PIT", "SD",  "SEA", "SF",  "STL", "TB",  "TEX", "TOR", "MIN",
         "PHI", "ATL", "CHW", "MIA", "NYY", "MIL", "LAA", "ARI", "BAL", "BOS",
         "CHC", "CIN", "CLE", "COL", "DET", "HOU", "KC",  "LAD", "WSN", "NYM")
 
-bref_team_results_2017_2022 <- function(Tm) {
+bref_team_results_2022 <- function(Tm) {
+  
+  bref_team_results_2022 <- function(Tm) {
+    bref_team_results(Tm = Tm, year = 2022)
+  }
+  
+  df_master <- lapply(Tm, bref_team_results_2022) %>%
+    bind_rows()
+  
+  df_master$Tm <- as.factor(df_master$Tm)
+  
+  df_master$Opp <- as.factor(df_master$Opp)
+  
+  df_master$Result <- df_master$Result %>%
+    gsub(pattern = "-wo", replacement = "") %>%
+    as.character()
+  
+  df_master$Date <- df_master$Date %>%
+    gsub(pattern = "\\s*\\([^\\)]+\\)", replacement = "") %>%
+    mgsub(pattern = c("Monday, ", "Tuesday, ", "Wednesday, ", "Thursday, ", "Friday, ", "Saturday, ", "Sunday, ", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"), 
+          c("", "", "", "", "", "", "", "March", "April", "May", "June", "July", "August", "September", "October"))
+  
+  df_master$DateFull <- paste(df_master$Date, df_master$Year, sep = " ") %>%
+    as.Date(format = "%B %d %Y")
+  
+  extractWin <- function(Result) {
+    if(length(grep("W", Result)) > 0) {
+      return(1)
+    } else if(length(grep("L", Result)) > 0) {
+      return(0)
+    } else {
+      return("")
+    }
+  }
+  
+  Wins <- NULL
+  for (i in 1:nrow(df_master)) {
+    Wins <- c(Wins, extractWin(df_master[i,"Result"]))
+  }
+  
+  Wins <- as.numeric(Wins)
+  
+  df_master <- cbind(df_master, Wins)
+  
+  df_master <- df_master %>%
+    group_by(Tm, Year) %>%
+    mutate("wins_so_far" = cumsum(Wins))
+  
+  df_master
+  
+}
+
+df2022 <- lapply(Team, bref_team_results_2022) %>%
+  bind_rows()
+
+bref_team_results_2017_2021 <- function(Tm) {
   
   bref_team_results_2017 <- function(Tm) {
     bref_team_results(Tm = Tm, year = 2017)
@@ -33,10 +88,6 @@ bref_team_results_2017_2022 <- function(Tm) {
     bref_team_results(Tm = Tm, year = 2021)
   }
   
-  bref_team_results_2022 <- function(Tm) {
-    bref_team_results(Tm = Tm, year = 2022)
-  }
-  
   df_2017 <- lapply(Tm, bref_team_results_2017) %>%
     bind_rows()
   
@@ -52,10 +103,7 @@ bref_team_results_2017_2022 <- function(Tm) {
   df_2021 <- lapply(Tm, bref_team_results_2021) %>%
     bind_rows()
   
-  df_2022 <- lapply(Tm, bref_team_results_2022) %>%
-    bind_rows()
-  
-  df_master <- rbind(df_2017, df_2018, df_2019, df_2020, df_2021, df_2022) %>%
+  df_master <- rbind(df_2017, df_2018, df_2019, df_2020, df_2021) %>%
     bind_rows()
   
   df_master$Tm <- as.factor(df_master$Tm)
@@ -100,8 +148,13 @@ bref_team_results_2017_2022 <- function(Tm) {
   df_master
 }
 
-df1 <- lapply(Tm, bref_team_results_2017_2022) %>%
+df2017_2021 <- lapply(Tm, bref_team_results_2017_2021) %>%
   bind_rows()
+
+df2017_2022 <- rbind(df2017_2021,df2022)
+
+Tm <- df2022$Tm %>%
+  unique()
 
 ### Loading existing FanGraph Pitcher IDs
 
